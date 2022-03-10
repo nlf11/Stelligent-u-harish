@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Cloudformation Template to create s3 Bucket"
+Resources:
+  S3Bucket: 
+    Type: 'AWS::S3::Bucket'
+    Description: Creating bucket 
+    Properties:
+      BucketName: my-cloudformationbuckettest121121
+      VersioningConfiguration:
+        Status: Enabled
+      
+      
+commands used
+Uploading data files using cli
+aws s3 cp --no-verify-ssl data/ s3://my-cloudformationbuckettest121121/data/ --recursive --profile temp
+
+modify and uploading local data files and sync the files to the bucket again
+
+aws s3 sync --no-verify-ssl data/ s3://my-cloudformationbuckettest121121/data/ --profile temp
+
+Inspect your bucket objects are there after syncing and see how many versions are there are:
+2 versions are there
