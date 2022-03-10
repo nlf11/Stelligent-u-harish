@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creation of ec2 instance
+Parameters:
+  Ec2InstanceType:
+    Type: String
+    Default: t2.micro
+  InstanceAMI:
+    Type: String
+    Default: ami-033b95fb8079dc481
+  MyKeyPairname:
+    Type: String
+    Default: MyUseKey1
+Resources:
+  MyEC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref InstanceAMI
+      InstanceType: !Ref Ec2InstanceType
+      KeyName: !Ref MyKeyPairname
+      SubnetId: subnet-0d9b162e9b95c33c1
+      SecurityGroupIds: 
+        - !Ref Mysecuritygroup
+      PrivateIpAddress: 10.1.1.10
+      Tags:
+        - Key: user
+          Value: harish.clabs
+        - Key: stelligent-u-lesson
+          Value: 4
+        - Key: stelligent-u-lab
+          Value: 4.1.1
+  Mysecuritygroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+        VpcId: vpc-06758e03cccb820be
+        GroupDescription: Allow port 22 to ssh
+        SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: '0.0.0.0/0'
+        - IpProtocol: icmp
+          FromPort: -1
+          ToPort: -1
+          CidrIp: '0.0.0.0/0'
+        Tags:
+        - Key: user
+          Value: harish.clabs
+        - Key: stelligent-u-lesson
+          Value: 4
+        - Key: stelligent-u-lab
+          Value: 4.1.1
+  ElasticIp: 
+    Type: AWS::EC2::EIP
+    Properties: 
+      InstanceId: !Ref MyEC2Instance
+Outputs: 
+  MyElasticip:
+    Value: !Ref ElasticIp
