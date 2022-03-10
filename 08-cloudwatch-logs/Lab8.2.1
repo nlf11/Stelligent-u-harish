@@ -1,0 +1,90 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creation of cloudtrail
+Parameters:
+  Cloudwatchlogsretention:
+    Description: Enter the number of days logs to keep in cloudwatch
+    Type: Number
+    Default: 14
+  Logfileprefix:
+    Description: optional the log file prefix
+    Type: String
+    Default: ''
+Resources:
+  CloudTrailS3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties: {}
+  TrailBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref CloudTrailS3Bucket 
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: AWSCloudTrailBucketPermissionsCheck
+            Effect: Allow
+            Principal:
+              Service:
+                - cloudtrail.amazonaws.com
+            Action: 's3:GetBucketAcl'
+            Resource:
+              'Fn::GetAtt':
+                - CloudTrailS3Bucket
+                - Arn
+          - Sid: AWSConfigbucket
+            Effect: Allow
+            Principal:
+              Service:
+                - cloudtrail.amazonaws.com
+            Action: 's3:PutObject'
+            Resource: !Sub arn:aws:s3:::${CloudTrailS3Bucket}/AWSLogs/${AWS::AccountId}/*
+            Condition:
+                StringEquals:
+                  's3:x-amz-acl': bucket-owner-full-control
+          - Sid: AllowSSLRequestOnly
+            Effect: Deny
+            Principal: '*'
+            Action: 's3:*'
+            Resource:
+              - !GetAtt CloudTrailS3Bucket.Arn
+              - !Sub '${CloudTrailS3Bucket.Arn}/*'
+            Condition: 
+              Bool: 
+                'aws:SecurityTransport': false
+  Loggroup:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      RetentionInDays: !Ref Cloudwatchlogsretention
+  IamRoleForCwLogsCloudTrail:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Sid: AssumeRole1
+          Effect: Allow
+          Principal:
+            Service: cloudtrail.amazonaws.com
+          Action: 'sts:AssumeRole'
+      Policies:
+      - PolicyName: allow-access-to-cw-logs
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'logs:CreateLogStream'
+                - 'logs:PutLogEvents'
+              Resource: !GetAtt Loggroup.Arn
+  CloudTrail:
+    DependsOn:
+      - TrailBucketPolicy
+    Type: 'AWS::CloudTrail::Trail'
+    Properties:
+      IncludeGlobalServiceEvents: true
+      IsLogging: true
+      IsMultiRegionTrail: true
+      S3BucketName: !Ref CloudTrailS3Bucket
+      S3KeyPrefix: !Ref Logfileprefix
+      EnableLogFileValidation: true
+      CloudWatchLogsLogGroupArn: !GetAtt Loggroup.Arn
+      CloudWatchLogsRoleArn: !GetAtt IamRoleForCwLogsCloudTrail.Arn
