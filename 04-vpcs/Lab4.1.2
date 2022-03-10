@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creation of VPC and adding Internet Gateway
+Resources:
+  Vpc:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: user
+          Value: harish.clabs
+        - Key: stelligent-u-lesson
+          Value: 4
+        - Key: stelligent-u-lab
+          Value: 4.1.2
+  VpcSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.1.1.0/24
+      AvailabilityZone: us-east-1a
+  VpcSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.1.2.0/24
+      AvailabilityZone: us-east-1b
+  myInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: user
+          Value: harish.clabs
+        - Key: stelligent-u-lesson
+          Value: 4
+        - Key: stelligent-u-lab
+          Value: 4.1.2
+  vpcInternetGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref Vpc
+      InternetGatewayId: !Ref myInternetGateway
+  myRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref Vpc
+  vpcInternetGatewayRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn:
+      - myInternetGateway
+      - vpcInternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref myRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref myInternetGateway
+  SubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref VpcSubnet1
+      RouteTableId: !Ref myRouteTable
+
+Parameters:
+  VpcCIDR:
+    Type: String
+    Description: VPC CIDR
+    Default: 10.1.0.0/16
