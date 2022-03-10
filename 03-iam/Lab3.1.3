@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Creation of role and attaching CMP"
+Parameters:
+  Managedpolicyarn:
+    Type: String
+    Description: existing policy arn 
+Resources:
+  Role:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: Testingiamrolenew
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+              - ec2.amazonaws.com
+          Action:
+            - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - !Ref Managedpolicyarn
