@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  EngineerName:
+    Type: String
+    Default: Harish
+  MyEngineerParameterKey:
+    Type: String
+    Default: /harish.c.labs/stelligent-u/lab11
+  EngineerTeam:
+    Type: String
+    Default: Stelligent1
+  EngineerTimezone:
+    Type: String
+    Default: GMT
+  EngineerState:
+    Type: String
+    Default: KA
+  EngineerStartDate:
+    Type: String
+    Default: 28-12-2021
+Resources:
+  NameParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: !Sub '${MyEngineerParameterKey}/${EngineerName}'
+      Type: String
+      Value: !Sub '${EngineerName}'
+      Description: SSM Parameter for engineer name
+  TeamParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: !Sub '${MyEngineerParameterKey}/${EngineerName}/team'
+      Type: String
+      Value: !Sub '${EngineerTeam}'
+      Description: SSM Parameter for engineer team
+  TimeZoneParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: !Sub '${MyEngineerParameterKey}/${EngineerName}/timezone'
+      Type: String
+      Value: !Sub '${EngineerTimezone}'
+      Description: SSM Parameter for engineer timezone
+  StateParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: !Sub '${MyEngineerParameterKey}/${EngineerName}/state'
+      Type: String
+      Value: !Sub '${EngineerState}'
+      Description: SSM Parameter for engineer state
+  StartDateParameter:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: !Sub '${MyEngineerParameterKey}/${EngineerName}/start-date'
+      Type: String
+      Value: !Sub '${EngineerStartDate}'
+      Description: SSM Parameter for engineer start-date
