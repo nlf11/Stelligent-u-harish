@@ -1,0 +1,30 @@
+Lab 2.3.2 Object Versions
+ Delete one of the object that you changed:
+ Delete the object
+
+aws s3 rm --no-verify-ssl s3://my-cloudformationbuckettest121121/data/file1.txt --profile temp
+
+
+
+Question: Delete Object Versions:
+ Yes,
+
+Generating version id using command
+
+aws s3api list-object-versions --no-verify-ssl --bucket my-cloudformationbuckettest121121  --profile temp
+
+To download version file run this command
+
+aws s3api --no-verify-ssl get-object --bucket my-cloudformationbuckettest121121 --key data/file1.txt --version-id QsN94UKdQSNSMBFgH5qR8BcdpGwMMIXe versiontest.txt --profile temp
+
+Delete all Verions:
+ We need suspend versioning first then only we can delete .
+Command to see whether versioning enabled or not:
+
+aws s3api get-bucket-versioning --no-verify-ssl --bucket my-cloudformationbuckettest121121  --profile temp
+
+aws s3api put-bucket-versioning --no-verify-ssl --bucket my-cloudformationbuckettest121121  --versioning-configuration Status=Suspended --profile temp
+
+To delete all versions:
+
+aws s3api delete-object --no-verify-ssl --bucket my-cloudformationbuckettest121121 --key data/file1.txt --version-id QsN94UKdQSNSMBFgH5qR8BcdpGwMMIXe --profile temp
