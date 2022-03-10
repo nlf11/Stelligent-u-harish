@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creation of Ec2 Instance 
+Resources:
+  MyAutoscalingLaunchConfig:
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Properties:
+      ImageId: ami-07d02ee1eeb0c996c
+      InstanceType: t2.micro 
+      KeyName: MyTestkey
+      BlockDeviceMappings:
+        - Ebs:
+            VolumeSize: 8
+            VolumeType: gp2
+            DeleteOnTermination: true
+          DeviceName: /dev/sda2
+      SecurityGroups:
+        - sg-0508d405a1c5ba8a6 
+  MyAutoscalingGroup:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties: 
+      AutoScalingGroupName: MyAsg
+      AvailabilityZones: !GetAZs ''
+      MinSize: '1'
+      MaxSize: '1' 
+      DesiredCapacity: '1'
+      LaunchConfigurationName: !Ref MyAutoscalingLaunchConfig
