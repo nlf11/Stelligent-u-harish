@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Cloudformation Template to create s3 Bucket"
+Resources:
+  S3Bucket: 
+    Type: 'AWS::S3::Bucket'
+    Description: Creating bucket 
+    Properties:
+      BucketName: my-cloudformationbuckettest121121
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: Department
+          Value: Testing
