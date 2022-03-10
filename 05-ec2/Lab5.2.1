@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creation of Ec2 Instance 
+Resources:  
+  MyUbutuinstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0b0ea68c435eb488d
+      LaunchTemplate: 
+        LaunchTemplateId: 
+          Ref: myLaunchTemplate 
+        Version: 
+          !GetAtt myLaunchTemplate.DefaultVersionNumber
+  myLaunchTemplate: 
+    Type: AWS::EC2::LaunchTemplate
+    Properties: 
+      LaunchTemplateName: MyLaunchTemplate1 
+      LaunchTemplateData:
+        BlockDeviceMappings: 
+          - Ebs: 
+              VolumeSize: 8
+              VolumeType: gp2
+              DeleteOnTermination: true
+            DeviceName: /dev/sda2
+        InstanceType: t2.micro
+        KeyName: MyTestkey
+        SecurityGroups:  
+          - !Ref MySecuritygroup
+  ElasticIp:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref MyUbutuinstance
+  MySecuritygroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow port 22 to ssh and Icmp to ping 
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: '0.0.0.0/0'
+        - IpProtocol: icmp
+          FromPort: -1
+          ToPort: -1
+          CidrIp: '0.0.0.0/0'
+Outputs:
+  MyinstanceEip:
+    Value: !Ref ElasticIp
