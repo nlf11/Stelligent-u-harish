@@ -1,0 +1,10 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Cloudformation Template to create s3 Bucket using Pseudo parameters"
+Resources:
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join [ '-', [ "mytestcloudformationtempbucket", !Ref "AWS::AccountId" ]  ]
+Outputs:
+  AccountId:  
+    Value: !Ref "AWS::AccountId"
