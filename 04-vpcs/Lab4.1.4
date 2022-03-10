@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creation of ec2 instance 
+Parameters:
+  Ec2InstanceType:
+    Type: String
+    Default: t2.micro
+  InstanceAMI:
+    Type: String 
+    Default: "ami-033b95fb8079dc481" 
+  MyKeyPairname: 
+    Type: String 
+    Default: MyUseKey1
+Resources:
+  MyEC2Instance:
+      Type: AWS::EC2::Instance
+      Properties:
+        ImageId: !Ref InstanceAMI
+        InstanceType: !Ref Ec2InstanceType
+        KeyName: !Ref MyKeyPairname
+        SubnetId: subnet-0d9b162e9b95c33c1
+        PrivateIpAddress: "10.1.1.10"
+        Tags:
+        - Key: user
+          Value: harish.clabs
+        - Key: stelligent-u-lesson
+          Value: 4
+        - Key: stelligent-u-lab
+          Value: 4.1.1
+Outputs:
+  InstanceId:
+    Description: Myinstance id is 
+    Value: !Ref InstanceAMI 
+  Myprivateip:
+    Description: Ip address of my ec2 is 
+    Value: !Ref PrivateIpAddress
+        
