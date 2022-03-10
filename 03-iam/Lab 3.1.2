@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Cloudformation Template to create IAM user and Managed Policy"
+Parameters:
+  Rolenametoattach:
+    Type: String
+    Description: Name of existing roles you want to add
+Resources:
+  SampleManagedpolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+            - 's3:Get*'
+            - 's3:List*'
+            Resource: '*'
+      Roles:
+        - !Ref Rolenametoattach
