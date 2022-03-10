@@ -1,0 +1,3 @@
+Exclude private object when uploading a bucket
+aws s3 cp --no-verify-ssl data/ s3://stelligent-u-harish.c/data/ --recursive --exclude "private*" --profile temp
+aws s3 sync --no-verify-ssl data/ s3://stelligent-u-harish.c/data/ --exclude "private*" --profile temp
