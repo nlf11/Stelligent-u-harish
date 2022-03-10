@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Cloudformation Template to create IAM user and Managed Policy"
+Parameters:
+  IamuserName:
+    Description: "Enter the IAM username"
+    Type: String
+Resources:
+  MyIamUser:
+    Description: "Creationg an Iam User"
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Ref IamuserName
+      ManagedPolicyArns:
+        - Fn::ImportValue: MyPolicy
