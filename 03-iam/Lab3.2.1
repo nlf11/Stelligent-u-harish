@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Creation of Iam user
+Resources:
+  MyRole: 
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: Trustroletesting
+      Description: test creation role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            AWS: arn:aws:iam::324320755747:user/testdemouser
+          Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
