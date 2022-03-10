@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Cloudformation Template to create IAM user and Managed Policy"
+Resources:
+  MyIamUser:
+    Description: "Creating an Iam User"
+    Type: AWS::IAM::User
+    Properties:
+      UserName: testuser343
+  IamPolicy:
+    Description: "Creating an managed policy for s3 "
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action:
+          - 's3:Get*'
+          - 's3:List*'
+          Resource: '*'
