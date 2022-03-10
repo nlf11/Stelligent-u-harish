@@ -1,0 +1,134 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: 'Creation of VPC ' 
+Resources:
+  Vpc:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: user
+          Value: harish.clabs
+        - Key: stelligent-u-lesson
+          Value: 4
+        - Key: stelligent-u-lab
+          Value: 4.1.1
+  PublicSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.1.1.0/24
+      AvailabilityZone: us-east-1a 
+  PrivateSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.1.2.0/24
+      AvailabilityZone: us-east-1b 
+  PrivateSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: 10.1.3.0/28
+      AvailabilityZone: us-east-1b 
+  NewInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref InstanceAMI
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref Keypairname
+      SubnetId: !Ref PrivateSubnet2
+      PrivateIpAddress: 10.1.3.12
+      Tags:
+        - Key: user
+          Value: harish.clabs
+        - Key: stelligent-u-lesson
+          Value: 4
+        - Key: stelligent-u-lab
+          Value: 4.1.1
+  myInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: user
+          Value: harish.clabs
+        - Key: stelligent-u-lesson
+          Value: 4
+        - Key: stelligent-u-lab
+          Value: 4.1.2
+  vpcInternetGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref Vpc
+      InternetGatewayId: !Ref myInternetGateway
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref Vpc
+  PublicInternetGatewayRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn:
+      - myInternetGateway
+      - vpcInternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref myInternetGateway
+  PublicSubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+  Myelasticnatgatewayip:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: VPC
+      Tags:
+        - Key: user
+          Value: harish.clabs
+        - Key: stelligent-u-lesson
+          Value: 4
+        - Key: stelligent-u-lab
+          Value: 4.1.1
+  NATGateway:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId:
+        'Fn::GetAtt': Myelasticnatgatewayip.AllocationId
+      SubnetId: !Ref PrivateSubnet2
+      Tags:
+        - Key: user
+          Value: harish.clabs
+        - Key: stelligent-u-lesson
+          Value: 4
+        - Key: stelligent-u-lab
+          Value: 4.1.1
+  PrivatesubnetrouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref Vpc
+  PrivatesubnetRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref PrivatesubnetrouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NATGateway
+Outputs:
+  myvpcid:
+    Description: vpcid referrring
+    Value: !Ref Vpc
+Parameters:
+  VpcCIDR:
+    Type: String
+    Description: VPC CIDR
+    Default: 10.1.0.0/16 
+  Keypairname:
+    Type: String
+    Description: "Enter the Keypair" 
+  InstanceType:
+    Type: String
+    Description: "Enter the instancetype"
+  InstanceAMI:
+    Type: String
+    Description: "Enter the AmIid"
