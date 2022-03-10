@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Cloudformation Template to create IAM user and Managed Policy"
+Resources:
+  MyInlineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: Iamroleforreadonly
+      Description: 'Iam role for resouurces'
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - iam.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: inlineiamreadonlypolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+            - Effect: Allow
+              Action:
+              - 'iam:Get*'
+              - 'iam:List*'
+              Resource: '*'
