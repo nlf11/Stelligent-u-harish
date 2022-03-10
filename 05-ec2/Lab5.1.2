@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creation of Ec2 Instance 
+Resources:
+  MyWindowsInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0484f9b6418b16d51
+      LaunchTemplate: 
+        LaunchTemplateId:
+          Ref: myLaunchTemplate 
+        Version: 
+          !GetAtt myLaunchTemplate.DefaultVersionNumber   
+  MyUbutuinstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0b0ea68c435eb488d
+      LaunchTemplate: 
+        LaunchTemplateId: 
+          Ref: myLaunchTemplate 
+        Version: 
+          !GetAtt myLaunchTemplate.DefaultVersionNumber
+  myLaunchTemplate: 
+    Type: AWS::EC2::LaunchTemplate
+    Properties: 
+      LaunchTemplateName: MyLaunchTemplate1 
+      LaunchTemplateData:
+        BlockDeviceMappings: 
+          - Ebs: 
+              VolumeSize: 8
+              VolumeType: gp2
+              DeleteOnTermination: true
+            DeviceName: /dev/sda2
+        InstanceType: t2.micro
+        KeyName: MyTestkey
+        SecurityGroupIds:  
+          - sg-0508d405a1c5ba8a6
