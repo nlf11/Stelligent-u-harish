@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creation of Ec2 Instance 
+Parameters:
+  Instanceami: 
+    Type: String 
+    Description: "Enter the AMI id"
+  Ec2instancetype: 
+    Type: String 
+    Description: "Enter the instance type"
+  Mykeypair: 
+    Type: String 
+    Description: "Enter the keypair "
+Resources:
+  MyubuntuEc2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref Instanceami
+      InstanceType: !Ref Ec2instancetype
+      KeyName: !Ref Mykeypair
+      SecurityGroupIds:
+      - sg-0508d405a1c5ba8a6
