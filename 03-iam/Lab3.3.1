@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Cloudformation Template to create s3 Bucket"
+Resources:
+  Myfirstbucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "mycloudformationtemplatetestbt-131"
+  Mysecondbucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "mycloudformationtemplatetestbu-13123"
+  SamplemanagedPolicytest:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 
+              - 's3:*'
+            Resource: '*'
+  Newrole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: Myroleforlab331
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17 
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: arn:aws:iam::324320755747:user/Mydemouser
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - !Ref SamplemanagedPolicytest
