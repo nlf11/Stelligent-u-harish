@@ -1,3 +1,7 @@
 aws s3 cp --no-verify-ssl data/ s3://stelligent-u-harish.c/data --recursive --profile temp
 
-aws s3 ls --no-verify-ssl stelligent-u-harish.c/data/ --profile temp
+aws s3 ls --no-verify-ssl stelligent-u-harish.c/data/ --profile temp 
+
+Copying to Top Level
+aws s3 cp --no-verify-ssl s3://stelligent-u-harish.c/data/ s3://stelligent-u-harish.c/ --recursive --profile temp
+
