@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creation of Ec2 Instance 
+Parmeters: 
+  Instanceami:
+    Type: String
+    Description: Enter the ami id 
+  Ec2instacetype: 
+    Type: String 
+    Description: Type of Instance 
+  MyKeyPairname:
+    Type: String 
+    Description: Enter the Keyname 
+Resources:
+  mylaunchtemplateasg:
+    Type: 'AWS::EC2::LaunchTemplate'
+    Properties:
+      LaunchTemplateName: MyLaunchTemplatedebi
+      LaunchTemplateData:
+        BlockDeviceMappings:
+          - Ebs:
+              VolumeSize: 8
+              VolumeType: gp2
+              DeleteOnTermination: true
+            DeviceName: /dev/sda2
+        ImageId: !Ref Instanceami
+        InstanceType: !Ref Ec2instacetype
+        KeyName: !Ref MyKeyPairname
+        SecurityGroupIds:
+        - sg-0508d405a1c5ba8a6
+  MyAutoscalingGroup22:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties: 
+      AutoScalingGroupName: MyAsg 
+      AvailabilityZones: !GetAZs ''
+      MinSize: '1'
+      MaxSize: '4' 
+      DesiredCapacity: '2'
+      LaunchTemplate: 
+        LaunchTemplateId:
+          Ref: mylaunchtemplateasg 
+        Version: !GetAtt mylaunchtemplateasg.DefaultVersionNumber 
+    UpdatePolicy:
+      AutoScalingReplacingUpdate:
+          WillReplace: True
