@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  WebServerAsg:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      AutoScalingGroupName: AutomationBoxes
+      VPCZoneIdentifier:
+        - subnet-05bb0fc6d73593e53
+        - subnet-088f7fd78f51539b9
+      DesiredCapacity: '2'
+      HealthCheckType: ELB
+      HealthCheckGracePeriod: 30
+      LaunchConfigurationName: !Ref WebServersLC
+      MaxSize: '3'
+      MinSize: '2'
+  WebServersLC:
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Properties:
+      ImageId: ami-033b95fb8079dc481
+      InstanceType: t2.micro 
+      LaunchConfigurationName: SimpleWebServerLC
+      SecurityGroups:
+        - sg-0755cbf9aac7d1e0c
+      UserData:
+        'Fn::Base64':
+          'Fn::Sub': |
+            #!/bin/bash -xe
+            sudo yum update -y
+            sudo amazon-linux-extras install nginx1 
+            sudo systemctl start nginx.service
+            sudo systemctl enable nginx.service
+            sudo service nginx start   
+  MyElbTargetGroup:
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+    Properties:
+      HealthCheckPath: /index.html 
+      HealthCheckIntervalSeconds: 20 
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 5 
+      TargetGroupAttributes:
+      - Key: deregistration_delay.timeout_seconds
+        Value: 20
+      VpcId: vpc-0d4ade3e65ea4c502
+      TargetType: instance
+      Port: 80
+      Protocol: HTTP
+  MyElb:
+    Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+    Properties:
+      Subnets:
+        - subnet-05bb0fc6d73593e53
+        - subnet-088f7fd78f51539b9
+      SecurityGroups:
+        - sg-0755cbf9aac7d1e0c 
+  HTTPSListener: 
+    Type: AWS::ElasticLoadBalancingV2::Listener 
+    Properties:
+      LoadBalancerArn: !Ref MyElb
+      Port: 443 
+      Protocol: 'HTTPS'
+      SslPolicy: ELBSecurityPolicy-FS-2018-06 
+      Certificates: 
+        - CertificateArn: arn:aws:acm:us-east-1:324320755747:certificate/eeec1c0d-8863-4046-b725-9c9da71613d8
+      DefaultActions: 
+        - Order: 1
+          TargetGroupArn: !Ref MyElbTargetGroup
+          Type: 'forward'
+  MyElbListner:
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref MyElbTargetGroup
+          Type: forward
+          ForwardConfig:
+            TargetGroups:
+              - TargetGroupArn: !Ref MyElbTargetGroup
+      LoadBalancerArn: !Ref MyElb
+      Port: 80
+      Protocol: HTTP 
