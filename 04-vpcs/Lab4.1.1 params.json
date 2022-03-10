@@ -1,0 +1,9 @@
+{
+    "Parameters": {
+        "VpcCIDR": {
+            "Type": "String",
+            "Description": "VPC CIDR",
+            "Default": "10.1.0.0/16"
+        }
+    }
+}
